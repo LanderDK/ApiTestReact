@@ -1,0 +1,29 @@
+* {
+  padding: 0px;
+  scroll-behavior: smooth;
+  color: black;
+}
+
+header a {
+  text-decoration: none;
+}
+
+header {
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.listNav {
+  list-style: none;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.listNav .listItemNav {
+  padding: 5px;
+  margin-left: 10px;
+  font-size: 20px;
+}
