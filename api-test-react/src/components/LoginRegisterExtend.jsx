@@ -61,15 +61,28 @@ export const Register = () => {
 
     var { uname, pass, email, license } = document.forms[0];
     // Compare user info
-    if (
-      await api.Register(uname.value, pass.value, email.value, license.value)
-    ) {
-      console.log("REGISTERD");
-      navigate(`/login`);
-      // setIsSubmitted(true);
+    if (!api.ApplicationSettings.freeMode) {
+      if (
+        await api.Register(uname.value, pass.value, email.value, license.value)
+      ) {
+        console.log("REGISTERD");
+        navigate(`/login`);
+        // setIsSubmitted(true);
+      } else {
+        // Username not found
+        console.log("NOT REGISTERD");
+      }
     } else {
-      // Username not found
-      console.log("NOT REGISTERD");
+      if (
+        await api.Register(uname.value, pass.value, email.value, "N/A")
+      ) {
+        console.log("REGISTERD");
+        navigate(`/login`);
+        // setIsSubmitted(true);
+      } else {
+        // Username not found
+        console.log("NOT REGISTERD");
+      }
     }
   };
 
@@ -89,10 +102,15 @@ export const Register = () => {
           <label>Email </label>
           <input type="text" name="email" required />
         </div>
-        <div>
-          <label>License </label>
-          <input type="text" name="license" required />
-        </div>
+        {!api.ApplicationSettings.freeMode ? (
+          <div>
+            <label>License </label>
+            <input type="text" name="license" required />
+          </div>
+        ) : (
+          <></>
+        )}
+
         <div>
           <input type="submit" />
         </div>

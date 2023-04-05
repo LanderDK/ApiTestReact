@@ -43,7 +43,11 @@ export const Navbar = () => {
               <>
                 <button onClick={handleLogin}>Sign In</button>
                 <button onClick={handleRegister}>Sign Up</button>
-                <button onClick={handleExtend}>Extend Sub</button>
+                {!api.ApplicationSettings.freeMode ? (
+                  <button onClick={handleExtend}>Extend Sub</button>
+                ) : (
+                  <></>
+                )}
               </>
             ) : (
               <>

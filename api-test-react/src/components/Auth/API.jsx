@@ -32,6 +32,7 @@ export class API {
   };
 
   ApplicationSettings = {
+    id: "",
     status: false,
     initialized: false,
     hwidCheck: false,
@@ -71,13 +72,18 @@ export class API {
 
       if (response.status === 200) {
         this.Constants.initialized = true;
+        this.ApplicationSettings.id = content.id;
         this.ApplicationSettings.status = content.status;
         this.ApplicationSettings.hwidCheck = content.hwidCheck;
         this.ApplicationSettings.programHash = content.programHash;
         this.ApplicationSettings.version = content.version;
         this.ApplicationSettings.downloadLink = content.downloadLink;
         this.ApplicationSettings.developerMode = content.developerMode;
+        this.ApplicationSettings.freeMode = content.freeMode;
 
+        if (this.ApplicationSettings.freeMode) {
+          alert("Application is in Free Mode!");
+        }
         if (this.ApplicationSettings.developerMode) {
           alert("Application is in Developer Mode!");
           // Do something
@@ -192,6 +198,7 @@ export class API {
         license: license,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
         lastIP: this.Constants.ip,
+        id: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -295,7 +302,11 @@ export class API {
   }
 }
 
-export const api = new API("BlitzWare", "64aa5135948a28fa6040b0d6900de77e9a3924e6cee6cc3333c32ff5f8707e8e", "1.0");
+export const api = new API(
+  "BlitzWare",
+  "64aa5135948a28fa6040b0d6900de77e9a3924e6cee6cc3333c32ff5f8707e8e",
+  "1.0"
+);
 // module.exports = {
 //   Initialize,
 //   Login,
