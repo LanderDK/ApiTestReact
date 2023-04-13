@@ -303,9 +303,9 @@ export class API {
 }
 
 export const api = new API(
-  "BlitzWare",
-  "64aa5135948a28fa6040b0d6900de77e9a3924e6cee6cc3333c32ff5f8707e8e",
-  "1.0"
+  "APP NAME",
+  "SECRET",
+  "VERSION"
 );
 // module.exports = {
 //   Initialize,
