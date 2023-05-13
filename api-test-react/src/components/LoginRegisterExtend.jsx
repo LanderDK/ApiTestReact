@@ -13,6 +13,7 @@ export const Login = () => {
     var { uname, pass } = document.forms[0];
     // Compare user info
     if (await api.Login(uname.value, pass.value)) {
+      await api.Log(api.User.Username, "User logged in");
       console.log("LOGGED IN");
       navigate(`/main`);
       // setIsSubmitted(true);
@@ -65,6 +66,7 @@ export const Register = () => {
       if (
         await api.Register(uname.value, pass.value, email.value, license.value)
       ) {
+        await api.Log(api.User.Username, "User registered");
         console.log("REGISTERD");
         navigate(`/login`);
         // setIsSubmitted(true);
@@ -73,9 +75,8 @@ export const Register = () => {
         console.log("NOT REGISTERD");
       }
     } else {
-      if (
-        await api.Register(uname.value, pass.value, email.value, "N/A")
-      ) {
+      if (await api.Register(uname.value, pass.value, email.value, "N/A")) {
+        await api.Log(api.User.Username, "User registered");
         console.log("REGISTERD");
         navigate(`/login`);
         // setIsSubmitted(true);
@@ -139,6 +140,7 @@ export const ExtendSub = () => {
     var { uname, pass, license } = document.forms[0];
     // Compare user info
     if (await api.ExtendSub(uname.value, pass.value, license.value)) {
+      await api.Log(api.User.Username, "User extended");
       console.log("EXTENDED");
       navigate(`/login`);
       // setIsSubmitted(true);

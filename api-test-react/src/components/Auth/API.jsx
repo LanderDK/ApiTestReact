@@ -300,6 +300,52 @@ export class API {
       }
     }
   }
+
+  async Log(username, action) {
+    if (!this.Constants.initialized) {
+      alert("Please initialize your application first!");
+      return false;
+    }
+    try {
+      const url = `${this.Constants.apiUrl}appLogs/`;
+      const response = await axios.post(url, {
+        username: username,
+        action: action,
+        ip: this.Constants.ip,
+        appId: this.ApplicationSettings.id,
+      });
+
+      const content = response.data;
+
+      if (response.status === 200 || response.status === 201) {
+        return true;
+      }
+    } catch (ex) {
+      if (ex.code === "ERR_NETWORK")
+        alert("Unable to connect to the remote server!");
+      // window.close();
+      else {
+        switch (ex.response.data.code) {
+          case "UNAUTHORIZED":
+            alert(ex.response.data.message);
+            // window.close();
+            break;
+          case "NOT_FOUND":
+            alert(ex.response.data.message);
+            // window.close();
+            break;
+          case "VALIDATION_FAILED":
+            alert(`Failed to validate username and/or password!`);
+            // window.close();
+            break;
+          default:
+            alert(`Unknown error occurred: ${ex.response.data.code}`);
+            // window.close();
+            break;
+        }
+      }
+    }
+  }
 }
 
 export const api = new API(
