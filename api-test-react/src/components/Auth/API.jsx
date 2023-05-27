@@ -141,6 +141,7 @@ export class API {
         password: password,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
         lastIP: this.Constants.ip,
+        appId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -258,6 +259,7 @@ export class API {
         password: password,
         license: license,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
+        appId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -348,11 +350,7 @@ export class API {
   }
 }
 
-export const api = new API(
-  "APP NAME",
-  "SECRET",
-  "VERSION"
-);
+export const api = new API("APP NAME", "SECRET", "VERSION");
 // module.exports = {
 //   Initialize,
 //   Login,
