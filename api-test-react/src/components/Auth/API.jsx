@@ -176,6 +176,9 @@ export class API {
             alert(`Failed to validate username and/or password!`);
             // window.close();
             break;
+          case "FORBIDDEN":
+            alert(ex.response.data.message);
+            break;
           default:
             alert(`Unknown error occurred: ${ex.response.data.code}`);
             // window.close();
@@ -227,7 +230,7 @@ export class API {
             return false;
           // window.close();
           case "FORBIDDEN":
-            alert("User with this username already exists!");
+            alert(ex.response.data.message);
             return false;
           // window.close();
           case "NOT_FOUND":
@@ -294,6 +297,9 @@ export class API {
             alert(ex.response.data.message);
             return false;
           // window.close();
+          case "FORBIDDEN":
+            alert(ex.response.data.message);
+            return false;
           default:
             alert(`Unknown error occurred: ${ex.response.data.code}`);
             return false;
