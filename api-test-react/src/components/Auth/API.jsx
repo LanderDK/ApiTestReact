@@ -50,13 +50,13 @@ export class API {
   User = {
     ID: "",
     Username: "",
-    Password: "",
     Email: "",
     HWID: "",
     IP: "",
     Expiry: "",
     LastLogin: "",
     RegisterDate: "",
+    AuthToken: "",
   };
 
   async Initialize(name, secret, version) {
@@ -147,14 +147,14 @@ export class API {
       const content = response.data;
 
       if (response.status === 200 || response.status === 201) {
-        this.User.ID = content.id;
-        this.User.Username = content.username;
-        this.User.Password = content.password;
-        this.User.Email = content.email;
-        this.User.Expiry = content.expiryDate;
-        this.User.LastLogin = content.lastLogin;
-        this.User.IP = content.lastIP;
-        this.User.HWID = content.hwid;
+        this.User.ID = content.user.id;
+        this.User.Username = content.user.username;
+        this.User.Email = content.user.email;
+        this.User.Expiry = content.user.expiryDate;
+        this.User.LastLogin = content.user.lastLogin;
+        this.User.IP = content.user.lastIP;
+        this.User.HWID = content.user.hwid;
+        this.User.AuthToken = content.token;
         this.Constants.isAuthed = true;
         return true;
       }
@@ -208,14 +208,15 @@ export class API {
       const content = response.data;
 
       if (response.status === 200 || response.status === 201) {
-        this.User.ID = content.id;
-        this.User.Username = content.username;
-        this.User.Password = content.password;
-        this.User.Email = content.email;
-        this.User.Expiry = content.expiryDate;
-        this.User.LastLogin = content.lastLogin;
-        this.User.IP = content.lastIP;
-        this.User.HWID = content.hwid;
+        this.User.ID = content.user.id;
+        this.User.Username = content.user.username;
+        this.User.Email = content.user.email;
+        this.User.Expiry = content.user.expiryDate;
+        this.User.LastLogin = content.user.lastLogin;
+        this.User.IP = content.user.lastIP;
+        this.User.HWID = content.user.hwid;
+        this.User.AuthToken = content.token;
+        this.Constants.isAuthed = true;
         return true;
       }
     } catch (ex) {
@@ -268,14 +269,15 @@ export class API {
       const content = response.data;
 
       if (response.status === 200 || response.status === 201) {
-        this.User.ID = content.id;
-        this.User.Username = content.username;
-        this.User.Password = content.password;
-        this.User.Email = content.email;
-        this.User.Expiry = content.expiryDate;
-        this.User.LastLogin = content.lastLogin;
-        this.User.IP = content.lastIP;
-        this.User.HWID = content.hwid;
+        this.User.ID = content.user.id;
+        this.User.Username = content.user.username;
+        this.User.Email = content.user.email;
+        this.User.Expiry = content.user.expiryDate;
+        this.User.LastLogin = content.user.lastLogin;
+        this.User.IP = content.user.lastIP;
+        this.User.HWID = content.user.hwid;
+        this.User.AuthToken = content.token;
+        this.Constants.isAuthed = true;
         return true;
       }
     } catch (ex) {
