@@ -14,9 +14,22 @@ export class API {
     }
   }
 
+  async calculateHash(data) {
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
+
+    const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+
+    return hashHex;
+  }
+
   Constants = {
     apiUrl: "https://api.blitzware.xyz/api/",
-    //apiUrl: 'http://localhost:9000/api/',
+    // apiUrl: 'http://localhost:9000/api/',
 
     initialized: false,
 
@@ -69,6 +82,17 @@ export class API {
       });
 
       const content = response.data;
+
+      const receivedHash = response.headers["x-response-hash"];
+      const recalculatedHash = this.calculateHash(content);
+
+      // console.log(receivedHash);
+      // console.log(recalculatedHash);
+
+      if (receivedHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        this.Constants.initialized = false;
+      }
 
       if (response.status === 200) {
         this.Constants.initialized = true;
@@ -146,6 +170,17 @@ export class API {
 
       const content = response.data;
 
+      const receivedHash = response.headers["x-response-hash"];
+      const recalculatedHash = this.calculateHash(content);
+
+      // console.log(receivedHash);
+      // console.log(recalculatedHash);
+
+      if (receivedHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        this.Constants.initialized = false;
+      }
+
       if (response.status === 200 || response.status === 201) {
         this.User.ID = content.user.id;
         this.User.Username = content.user.username;
@@ -207,6 +242,17 @@ export class API {
 
       const content = response.data;
 
+      const receivedHash = response.headers["x-response-hash"];
+      const recalculatedHash = this.calculateHash(content);
+
+      // console.log(receivedHash);
+      // console.log(recalculatedHash);
+
+      if (receivedHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        this.Constants.initialized = false;
+      }
+
       if (response.status === 200 || response.status === 201) {
         this.User.ID = content.user.id;
         this.User.Username = content.user.username;
@@ -267,6 +313,17 @@ export class API {
       });
 
       const content = response.data;
+
+      const receivedHash = response.headers["x-response-hash"];
+      const recalculatedHash = this.calculateHash(content);
+
+      // console.log(receivedHash);
+      // console.log(recalculatedHash);
+
+      if (receivedHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        this.Constants.initialized = false;
+      }
 
       if (response.status === 200 || response.status === 201) {
         this.User.ID = content.user.id;
@@ -358,7 +415,7 @@ export class API {
   }
 }
 
-export const api = new API("APP NAME", "SECRET", "VERSION");
+export const api = new API("APP NAME", "APP SECRET", "APP VERSION");
 // module.exports = {
 //   Initialize,
 //   Login,
