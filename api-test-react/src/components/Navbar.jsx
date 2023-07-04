@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import { useCallback } from "react";
-import { api } from "./Auth/API";
+import { api } from "./Auth/api";
+import { useLogout, useSession } from "../contexts/AuthProvider";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const { isAuthed } = useSession();
+  const logout = useLogout();
 
   const handleLogin = useCallback(async () => {
     navigate("/login");
@@ -19,9 +22,8 @@ export const Navbar = () => {
   }, [navigate]);
 
   const handleLogout = useCallback(() => {
-    api.Constants.isAuthed = false;
-    navigate("/");
-  }, [navigate]);
+    logout();
+  }, [logout]);
 
   return (
     <header>
@@ -39,7 +41,7 @@ export const Navbar = () => {
             <Link to="/main">MainApp</Link>
           </li>
           <li className="listItemNav">
-            {!api.Constants.isAuthed ? (
+            {!isAuthed ? (
               <>
                 <button onClick={handleLogin}>Sign In</button>
                 <button onClick={handleRegister}>Sign Up</button>

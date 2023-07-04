@@ -1,10 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "./Auth/API";
+import { useNavigate, Navigate } from "react-router-dom";
+import { api } from "./Auth/api";
+import {
+  useLogin,
+  useRegister,
+  useExtend,
+  useSession,
+} from "../contexts/AuthProvider";
 
 export const Login = () => {
   const [isSubmitted] = useState(false);
   const navigate = useNavigate();
+  const login = useLogin();
+  const { loading, error, isAuthed } = useSession();
+
+  if (isAuthed) {
+    return <Navigate from="/login" to={`/main`} />;
+  }
 
   const handleSubmit = async (event) => {
     //Prevent page reload
@@ -12,7 +24,10 @@ export const Login = () => {
 
     var { uname, pass } = document.forms[0];
     // Compare user info
-    if (await api.Login(uname.value, pass.value)) {
+    // if (await api.Login(uname.value, pass.value)) {
+    const success = await login(uname.value, pass.value);
+    console.log(success);
+    if (success.booleanValue) {
       await api.Log(api.User.Username, "User logged in");
       console.log("LOGGED IN");
       navigate(`/main`);
@@ -55,6 +70,12 @@ export const Login = () => {
 export const Register = () => {
   const [isSubmitted] = useState(false);
   const navigate = useNavigate();
+  const register = useRegister();
+  const { loading, error, isAuthed } = useSession();
+
+  if (isAuthed) {
+    return <Navigate from="/register" to={`/main`} />;
+  }
 
   const handleSubmit = async (event) => {
     //Prevent page reload
@@ -63,9 +84,10 @@ export const Register = () => {
     var { uname, pass, email, license } = document.forms[0];
     // Compare user info
     if (!api.ApplicationSettings.freeMode) {
-      if (
-        await api.Register(uname.value, pass.value, email.value, license.value)
-      ) {
+      // if (
+      //   await api.Register(uname.value, pass.value, email.value, license.value)
+      // ) {
+      if (await register(uname.value, pass.value, email.value, license.value)) {
         await api.Log(api.User.Username, "User registered");
         console.log("REGISTERD");
         navigate(`/login`);
@@ -75,7 +97,8 @@ export const Register = () => {
         console.log("NOT REGISTERD");
       }
     } else {
-      if (await api.Register(uname.value, pass.value, email.value, "N/A")) {
+      // if (await api.Register(uname.value, pass.value, email.value, "N/A")) {
+      if (await register(uname.value, pass.value, email.value, "N/A")) {
         await api.Log(api.User.Username, "User registered");
         console.log("REGISTERD");
         navigate(`/login`);
@@ -132,6 +155,12 @@ export const Register = () => {
 export const ExtendSub = () => {
   const [isSubmitted] = useState(false);
   const navigate = useNavigate();
+  const extend = useExtend();
+  const { loading, error, isAuthed } = useSession();
+
+  if (isAuthed) {
+    return <Navigate from="/extend" to={`/main`} />;
+  }
 
   const handleSubmit = async (event) => {
     //Prevent page reload
@@ -139,7 +168,8 @@ export const ExtendSub = () => {
 
     var { uname, pass, license } = document.forms[0];
     // Compare user info
-    if (await api.ExtendSub(uname.value, pass.value, license.value)) {
+    // if (await api.ExtendSub(uname.value, pass.value, license.value)) {
+    if (await extend(uname.value, pass.value, license.value)) {
       await api.Log(api.User.Username, "User extended");
       console.log("EXTENDED");
       navigate(`/login`);

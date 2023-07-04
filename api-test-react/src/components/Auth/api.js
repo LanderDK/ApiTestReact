@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axios } from ".";
 
 export class API {
   constructor(name, secret, version) {
@@ -7,9 +7,15 @@ export class API {
 
   async getIP() {
     try {
-      const response = await axios.get("https://icanhazip.com");
-      this.Constants.ip = response.data.trim();
+      const response = await fetch("https://icanhazip.com");
+      if (response.ok) {
+        const ip = await response.text();
+        this.Constants.ip = ip.trim();
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
     } catch (err) {
+      console.log(err);
       console.error(`Error fetching IP address: ${err.message}`);
     }
   }
@@ -28,12 +34,7 @@ export class API {
   }
 
   Constants = {
-    apiUrl: "https://api.blitzware.xyz/api/",
-    // apiUrl: 'http://localhost:9000/api/',
-
     initialized: false,
-
-    isAuthed: false,
 
     started: false,
 
@@ -74,8 +75,7 @@ export class API {
 
   async Initialize(name, secret, version) {
     try {
-      const url = `${this.Constants.apiUrl}applications/initialize`;
-      const response = await axios.post(url, {
+      const response = await axios.post("applications/initialize", {
         name,
         secret,
         version,
@@ -84,19 +84,22 @@ export class API {
       const content = response.data;
 
       const receivedHash = response.headers["x-response-hash"];
-      const recalculatedHash = this.calculateHash(content);
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(content)
+      );
 
       // console.log(receivedHash);
       // console.log(recalculatedHash);
 
       if (receivedHash !== recalculatedHash) {
         alert("Possible malicious activity detected!");
-        this.Constants.initialized = false;
+        throw new Error("Request failed, try again");
       }
 
       if (response.status === 200) {
         this.Constants.initialized = true;
         this.ApplicationSettings.id = content.id;
+        this.ApplicationSettings.name = content.name;
         this.ApplicationSettings.status = content.status;
         this.ApplicationSettings.hwidCheck = content.hwidCheck;
         this.ApplicationSettings.programHash = content.programHash;
@@ -104,6 +107,8 @@ export class API {
         this.ApplicationSettings.downloadLink = content.downloadLink;
         this.ApplicationSettings.developerMode = content.developerMode;
         this.ApplicationSettings.freeMode = content.freeMode;
+        localStorage.setItem("app", JSON.stringify(this.ApplicationSettings));
+        localStorage.setItem("consts", JSON.stringify(this.Constants));
 
         if (this.ApplicationSettings.freeMode) {
           alert("Application is in Free Mode!");
@@ -122,7 +127,7 @@ export class API {
           alert(
             "Looks like this application is disabled, please try again later!"
           );
-          this.Constants.initialized = false;
+          throw new Error("Request failed, try again");
           //   window.close();
         }
       }
@@ -154,13 +159,12 @@ export class API {
   }
 
   async Login(username, password) {
-    if (!this.Constants.initialized) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
       return false;
     }
     try {
-      const url = `${this.Constants.apiUrl}users/login`;
-      const response = await axios.post(url, {
+      const response = await axios.post("users/login", {
         username: username,
         password: password,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
@@ -171,14 +175,16 @@ export class API {
       const content = response.data;
 
       const receivedHash = response.headers["x-response-hash"];
-      const recalculatedHash = this.calculateHash(content);
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(content)
+      );
 
       // console.log(receivedHash);
       // console.log(recalculatedHash);
 
       if (receivedHash !== recalculatedHash) {
         alert("Possible malicious activity detected!");
-        this.Constants.initialized = false;
+        throw new Error("Request failed, try again");
       }
 
       if (response.status === 200 || response.status === 201) {
@@ -190,7 +196,6 @@ export class API {
         this.User.IP = content.user.lastIP;
         this.User.HWID = content.user.hwid;
         this.User.AuthToken = content.token;
-        this.Constants.isAuthed = true;
         return true;
       }
     } catch (ex) {
@@ -201,36 +206,32 @@ export class API {
         switch (ex.response.data.code) {
           case "UNAUTHORIZED":
             alert(ex.response.data.message);
-            // window.close();
-            break;
+            return false;
           case "NOT_FOUND":
             alert(ex.response.data.message);
-            // window.close();
-            break;
+            return false;
           case "VALIDATION_FAILED":
             alert(`Failed to validate username and/or password!`);
-            // window.close();
-            break;
+            return false;
           case "FORBIDDEN":
             alert(ex.response.data.message);
             break;
           default:
             alert(`Unknown error occurred: ${ex.response.data.code}`);
-            // window.close();
-            break;
+            return false;
         }
       }
+      return false;
     }
   }
 
   async Register(username, password, email, license) {
-    if (!this.Constants.initialized) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
       return false;
     }
     try {
-      const url = `${this.Constants.apiUrl}users/register`;
-      const response = await axios.post(url, {
+      const response = await axios.post("users/register", {
         username: username,
         password: password,
         email: email,
@@ -243,14 +244,16 @@ export class API {
       const content = response.data;
 
       const receivedHash = response.headers["x-response-hash"];
-      const recalculatedHash = this.calculateHash(content);
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(content)
+      );
 
       // console.log(receivedHash);
       // console.log(recalculatedHash);
 
       if (receivedHash !== recalculatedHash) {
         alert("Possible malicious activity detected!");
-        this.Constants.initialized = false;
+        throw new Error("Request failed, try again");
       }
 
       if (response.status === 200 || response.status === 201) {
@@ -262,7 +265,6 @@ export class API {
         this.User.IP = content.user.lastIP;
         this.User.HWID = content.user.hwid;
         this.User.AuthToken = content.token;
-        this.Constants.isAuthed = true;
         return true;
       }
     } catch (ex) {
@@ -298,13 +300,12 @@ export class API {
   }
 
   async ExtendSub(username, password, license) {
-    if (!this.Constants.initialized) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
       return false;
     }
     try {
-      const url = `${this.Constants.apiUrl}users/upgrade`;
-      const response = await axios.put(url, {
+      const response = await axios.put("users/upgrade", {
         username: username,
         password: password,
         license: license,
@@ -315,14 +316,16 @@ export class API {
       const content = response.data;
 
       const receivedHash = response.headers["x-response-hash"];
-      const recalculatedHash = this.calculateHash(content);
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(content)
+      );
 
       // console.log(receivedHash);
       // console.log(recalculatedHash);
 
       if (receivedHash !== recalculatedHash) {
         alert("Possible malicious activity detected!");
-        this.Constants.initialized = false;
+        throw new Error("Request failed, try again");
       }
 
       if (response.status === 200 || response.status === 201) {
@@ -334,7 +337,6 @@ export class API {
         this.User.IP = content.user.lastIP;
         this.User.HWID = content.user.hwid;
         this.User.AuthToken = content.token;
-        this.Constants.isAuthed = true;
         return true;
       }
     } catch (ex) {
@@ -369,13 +371,12 @@ export class API {
   }
 
   async Log(username, action) {
-    if (!this.Constants.initialized) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
-      return false;
+      throw new Error("Request failed, try again");
     }
     try {
-      const url = `${this.Constants.apiUrl}appLogs/`;
-      const response = await axios.post(url, {
+      const response = await axios.post("appLogs/", {
         username: username,
         action: action,
         ip: this.Constants.ip,
@@ -413,9 +414,40 @@ export class API {
       }
     }
   }
+
+  async getById(id) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
+      alert("Please initialize your application first!");
+      throw new Error("Request failed, try again");
+    }
+    try {
+      const response = await axios.get(`users/userFromWebApp/${id}`);
+
+      const responseHash = response.headers["x-response-hash"];
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(response.data)
+      );
+
+      // console.log(responseHash);
+      // console.log(recalculatedHash);
+
+      if (responseHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        throw new Error("Request failed, try again");
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const api = new API("APP NAME", "APP SECRET", "APP VERSION");
+export const api = new API(
+  "BlitzWare",
+  "ca154f18e1581fa360868af13dfd2371fd2d195ac966da5d1645e1766efa764d",
+  "1.0"
+);
 // module.exports = {
 //   Initialize,
 //   Login,

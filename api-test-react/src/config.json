@@ -1,0 +1,4 @@
+{
+  "base_url":"https://api.blitzware.xyz/api/",
+  "token_key": "authToken"
+}
