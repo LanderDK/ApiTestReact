@@ -158,7 +158,7 @@ export class API {
     }
   }
 
-  async Login(username, password) {
+  async Login(username, password, twoFactorCode) {
     if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
       return false;
@@ -167,6 +167,7 @@ export class API {
       const response = await axios.post("users/login", {
         username: username,
         password: password,
+        twoFactorCode: twoFactorCode,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
         lastIP: this.Constants.ip,
         appId: this.ApplicationSettings.id,
@@ -441,13 +442,62 @@ export class API {
       throw error;
     }
   }
+
+  async createQRCode() {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
+      alert("Please initialize your application first!");
+      throw new Error("Request failed, try again");
+    }
+    try {
+      const response = await axios.post("2fa/user", {
+        userId: this.User.ID,
+        appId: this.ApplicationSettings.id,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verify2FA(code) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
+      alert("Please initialize your application first!");
+      throw new Error("Request failed, try again");
+    }
+    try {
+      const response = await axios.post("2fa/user/verify", {
+        userId: this.User.ID,
+        appId: this.ApplicationSettings.id,
+        token: code,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async disable2FA(code) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
+      alert("Please initialize your application first!");
+      throw new Error("Request failed, try again");
+    }
+    try {
+      const response = await axios.post("2fa/user/disable", {
+        userId: this.User.ID,
+        appId: this.ApplicationSettings.id,
+        token: code,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const api = new API(
-  "BlitzWare",
-  "ca154f18e1581fa360868af13dfd2371fd2d195ac966da5d1645e1766efa764d",
-  "1.0"
-);
+export const api = new API("APP NAME", "APP SECRET", "APP VERSION");
 // module.exports = {
 //   Initialize,
 //   Login,

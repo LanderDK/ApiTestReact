@@ -123,11 +123,11 @@ export const AuthProvider = ({ children }) => {
   }, [stateToken, setSession]);
 
   const login = useCallback(
-    async (username, password) => {
+    async (username, password, twoFactorCode) => {
       try {
         setLoading(true);
         setError(null);
-        const success = await userAPI.api.Login(username, password);
+        const success = await userAPI.api.Login(username, password, twoFactorCode);
 
         if (success) {
           await setSession(userAPI.api.User.AuthToken, userAPI.api.User);

@@ -22,11 +22,10 @@ export const Login = () => {
     //Prevent page reload
     event.preventDefault();
 
-    var { uname, pass } = document.forms[0];
+    var { uname, pass, twoFactor } = document.forms[0];
     // Compare user info
     // if (await api.Login(uname.value, pass.value)) {
-    const success = await login(uname.value, pass.value);
-    console.log(success);
+    const success = await login(uname.value, pass.value, twoFactor.value);
     if (success.booleanValue) {
       await api.Log(api.User.Username, "User logged in");
       console.log("LOGGED IN");
@@ -49,6 +48,10 @@ export const Login = () => {
         <div>
           <label>Password </label>
           <input type="password" name="pass" required />
+        </div>
+        <div>
+          <label>2FA Code (if enabled)</label>
+          <input type="twoFactor" name="twoFactor" />
         </div>
         <div>
           <input type="submit" />
