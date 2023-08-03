@@ -226,6 +226,72 @@ export class API {
     }
   }
 
+  async LoginLicenseOnly(license) {
+    if (!JSON.parse(localStorage.getItem("consts")).initialized) {
+      alert("Please initialize your application first!");
+      return false;
+    }
+    try {
+      const response = await axios.post("licenses/login", {
+        license: license,
+        hwid: "N/A",
+        lastIP: this.Constants.ip,
+        appId: this.ApplicationSettings.id,
+      });
+
+      const content = response.data;
+
+      const receivedHash = response.headers["x-response-hash"];
+      const recalculatedHash = await this.calculateHash(
+        JSON.stringify(content)
+      );
+
+      // console.log(receivedHash);
+      // console.log(recalculatedHash);
+
+      if (receivedHash !== recalculatedHash) {
+        alert("Possible malicious activity detected!");
+        throw new Error("Request failed, try again");
+      }
+
+      if (response.status === 200 || response.status === 201) {
+        this.User.ID = content.user.id;
+        this.User.Username = content.user.username;
+        this.User.Email = content.user.email;
+        this.User.Expiry = content.user.expiryDate;
+        this.User.LastLogin = content.user.lastLogin;
+        this.User.IP = content.user.lastIP;
+        this.User.HWID = content.user.hwid;
+        this.User.AuthToken = content.token;
+        return true;
+      }
+    } catch (ex) {
+      if (ex.code === "ERR_NETWORK")
+        alert("Unable to connect to the remote server!");
+      // window.close();
+      else {
+        switch (ex.response.data.code) {
+          case "UNAUTHORIZED":
+            alert(ex.response.data.message);
+            return false;
+          case "NOT_FOUND":
+            alert(ex.response.data.message);
+            return false;
+          case "VALIDATION_FAILED":
+            alert(`Failed to validate username and/or password!`);
+            return false;
+          case "FORBIDDEN":
+            alert(ex.response.data.message);
+            break;
+          default:
+            alert(`Unknown error occurred: ${ex.response.data.code}`);
+            return false;
+        }
+      }
+      return false;
+    }
+  }
+
   async Register(username, password, email, license) {
     if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
