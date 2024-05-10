@@ -170,7 +170,7 @@ export class API {
         twoFactorCode: twoFactorCode,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
         lastIP: this.Constants.ip,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -236,7 +236,7 @@ export class API {
         license: license,
         hwid: "N/A",
         lastIP: this.Constants.ip,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -305,7 +305,7 @@ export class API {
         license: license,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
         lastIP: this.Constants.ip,
-        id: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -377,7 +377,7 @@ export class API {
         password: password,
         license: license,
         hwid: "40990C98-7D80-EA11-80D6-089798990BE2",
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
       });
 
       const content = response.data;
@@ -437,17 +437,17 @@ export class API {
     }
   }
 
-  async Log(username, action) {
+  async Log(action) {
     if (!JSON.parse(localStorage.getItem("consts")).initialized) {
       alert("Please initialize your application first!");
       throw new Error("Request failed, try again");
     }
     try {
       const response = await axios.post("appLogs/", {
-        username: username,
         action: action,
         ip: this.Constants.ip,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
+        userId: this.User.ID,
       });
 
       const content = response.data;
@@ -517,7 +517,7 @@ export class API {
     try {
       const response = await axios.post("2fa/user", {
         userId: this.User.ID,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
       });
 
       return response.data;
@@ -534,7 +534,7 @@ export class API {
     try {
       const response = await axios.post("2fa/user/verify", {
         userId: this.User.ID,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
         token: code,
       });
 
@@ -552,7 +552,7 @@ export class API {
     try {
       const response = await axios.post("2fa/user/disable", {
         userId: this.User.ID,
-        appId: this.ApplicationSettings.id,
+        applicationId: this.ApplicationSettings.id,
         token: code,
       });
 

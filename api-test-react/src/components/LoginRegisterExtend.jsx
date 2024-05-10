@@ -27,7 +27,7 @@ export const Login = () => {
     // if (await api.Login(uname.value, pass.value)) {
     const success = await login(uname.value, pass.value, twoFactor.value);
     if (success.booleanValue) {
-      await api.Log(api.User.Username, "User logged in");
+      await api.Log("User logged in");
       console.log("LOGGED IN");
       navigate(`/main`);
       // setIsSubmitted(true);
@@ -91,7 +91,7 @@ export const Register = () => {
       //   await api.Register(uname.value, pass.value, email.value, license.value)
       // ) {
       if (await register(uname.value, pass.value, email.value, license.value)) {
-        await api.Log(api.User.Username, "User registered");
+        await api.Log("User registered");
         console.log("REGISTERD");
         navigate(`/login`);
         // setIsSubmitted(true);
@@ -102,7 +102,7 @@ export const Register = () => {
     } else {
       // if (await api.Register(uname.value, pass.value, email.value, "N/A")) {
       if (await register(uname.value, pass.value, email.value, "N/A")) {
-        await api.Log(api.User.Username, "User registered");
+        await api.Log("User registered");
         console.log("REGISTERD");
         navigate(`/login`);
         // setIsSubmitted(true);
@@ -173,7 +173,7 @@ export const ExtendSub = () => {
     // Compare user info
     // if (await api.ExtendSub(uname.value, pass.value, license.value)) {
     if (await extend(uname.value, pass.value, license.value)) {
-      await api.Log(api.User.Username, "User extended");
+      await api.Log("User extended");
       console.log("EXTENDED");
       navigate(`/login`);
       // setIsSubmitted(true);
